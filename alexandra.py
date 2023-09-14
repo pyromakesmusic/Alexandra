@@ -4,9 +4,10 @@ Copyright 2023 new underground media brigade
 See license for complete copyright details.
 """
 
-import tkinter as tk
-import pyautogui
 import datetime
+import tkinter as tk
+import numpy as np
+import pyautogui
 import pytesseract
 import PIL
 
@@ -25,8 +26,8 @@ class Application():
         self.current_x = None
         self.current_y = None
 
-        root.geometry('400x50+200+200')  # set new geometry
-        root.title('Lil Snippy')
+        root.geometry('100x50+200+200')  # set new geometry
+        root.title('Alexandra')
 
         self.menu_frame = tk.Frame(master)
         self.menu_frame.pack(fill=tk.BOTH, expand=tk.YES, padx=1, pady=1)

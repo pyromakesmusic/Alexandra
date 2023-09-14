@@ -7,11 +7,13 @@ See license for complete copyright details.
 import tkinter as tk
 import pyautogui
 import datetime
+import pytesseract
+import PIL
 
 def take_bounded_screenshot(x1, y1, x2, y2):
     image = pyautogui.screenshot(region=(x1, y1, x2, y2))
     file_name = datetime.datetime.now().strftime("%f")
-    image.save("snips/" + file_name + ".png")
+    image.save("snips/" + file_name + ".png") # want to remove this line and instead feed into pytesseract.
 
 
 class Application():

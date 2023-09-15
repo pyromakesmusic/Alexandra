@@ -8,6 +8,7 @@ import datetime
 import os
 import tkinter as tk
 import numpy as np
+import pandas as pd
 import pyautogui
 import pytesseract
 import PIL
@@ -23,6 +24,9 @@ def take_bounded_screenshot(x1, y1, x2, y2):
 
 
 class Application():
+    """
+    Tkinter stuff
+    """
     def __init__(self, master):
         self.snip_surface = None
         self.master = master
@@ -32,8 +36,8 @@ class Application():
         self.current_y = None
 
         root.geometry('100x50+200+200')  # set new geometry
-        root.title('Alexandra')
-        root.iconbitmap(r'Alexandra.ico')
+        root.title('Alexandra') # Window title
+        root.iconbitmap(r'Alexandra.ico') # Window icon
 
         self.menu_frame = tk.Frame(master)
         self.menu_frame.pack(fill=tk.BOTH, expand=tk.YES, padx=1, pady=1)

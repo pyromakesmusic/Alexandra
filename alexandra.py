@@ -21,8 +21,10 @@ def take_bounded_screenshot(x1, y1, x2, y2):
     imgarray = np.array(PIL.Image.open("temp/" + file_name + ".png"))
     os.remove("temp/" + file_name + ".png")
     text = pytesseract.image_to_string(imgarray)
-    text_df = pd.read_csv(io.StringIO(text)) # this doesn't work, pandas is expecting a file object
-    print(text_df)
+    text_df = pd.read_csv(io.StringIO(text))
+    text_df_revised = text_df.fillna("")
+    text_table = text_df_revised.squeeze()
+    print(text_table)
 
 
 class Application():
@@ -37,7 +39,7 @@ class Application():
         self.current_x = None
         self.current_y = None
 
-        root.geometry('100x50+200+200')  # set new geometry
+        root.geometry('120x50+200+200')  # set new geometry
         root.title('Alexandra') # Window title
         root.iconbitmap(r'Alexandra.ico') # Window icon
 
@@ -47,7 +49,7 @@ class Application():
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
         self.buttonBar.pack()
 
-        self.snipButton = tk.Button(self.buttonBar, width=5, height=5, command=self.create_screen_canvas, background="green")
+        self.snipButton = tk.Button(self.buttonBar, width=8, height=8, command=self.create_screen_canvas, background="red")
         self.snipButton.pack()
 
         self.master_screen = tk.Toplevel(root)

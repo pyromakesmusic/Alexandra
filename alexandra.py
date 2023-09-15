@@ -67,19 +67,19 @@ class Application():
         self.display_rectangle_position()
 
         if self.start_x <= self.current_x and self.start_y <= self.current_y:
-            print("right down")
+            #print("right down")
             take_bounded_screenshot(self.start_x, self.start_y, self.current_x - self.start_x, self.current_y - self.start_y)
 
         elif self.start_x >= self.current_x and self.start_y <= self.current_y:
-            print("left down")
+            #print("left down")
             take_bounded_screenshot(self.current_x, self.start_y, self.start_x - self.current_x, self.current_y - self.start_y)
 
         elif self.start_x <= self.current_x and self.start_y >= self.current_y:
-            print("right up")
+            #print("right up")
             take_bounded_screenshot(self.start_x, self.current_y, self.current_x - self.start_x, self.start_y - self.current_y)
 
         elif self.start_x >= self.current_x and self.start_y >= self.current_y:
-            print("left up")
+            #print("left up")
             take_bounded_screenshot(self.current_x, self.current_y, self.start_x - self.current_x, self.start_y - self.current_y)
 
         self.exit_screenshot_mode()

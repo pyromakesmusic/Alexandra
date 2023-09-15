@@ -6,6 +6,7 @@ See license for complete copyright details.
 
 import datetime
 import os
+import io
 import tkinter as tk
 import numpy as np
 import pandas as pd
@@ -20,7 +21,8 @@ def take_bounded_screenshot(x1, y1, x2, y2):
     imgarray = np.array(PIL.Image.open("temp/" + file_name + ".png"))
     os.remove("temp/" + file_name + ".png")
     text = pytesseract.image_to_string(imgarray)
-    print(text)
+    text_df = pd.read_csv(io.StringIO(text)) # this doesn't work, pandas is expecting a file object
+    print(text_df)
 
 
 class Application():

@@ -39,7 +39,7 @@ class Application():
         self.current_x = None
         self.current_y = None
 
-        root.geometry('120x50+200+200')  # set new geometry
+        root.geometry('300x50+200+200')  # set new geometry
         root.title('Alexandra') # Window title
         root.iconbitmap(r'Alexandra.ico') # Window icon
 
@@ -49,7 +49,7 @@ class Application():
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
         self.buttonBar.pack()
 
-        self.snipButton = tk.Button(self.buttonBar, width=8, height=8, command=self.create_screen_canvas, background="red")
+        self.snipButton = tk.Button(self.buttonBar, width=6, height=8, command=self.create_screen_canvas, background="red")
         self.snipButton.pack()
 
         self.master_screen = tk.Toplevel(root)

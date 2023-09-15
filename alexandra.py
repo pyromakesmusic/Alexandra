@@ -5,6 +5,7 @@ See license for complete copyright details.
 """
 
 import datetime
+import os
 import tkinter as tk
 import numpy as np
 import pyautogui
@@ -16,6 +17,7 @@ def take_bounded_screenshot(x1, y1, x2, y2):
     file_name = datetime.datetime.now().strftime("%f")
     image.save("snips/" + file_name + ".png") # want to remove this line and instead feed into pytesseract.
     imgarray = np.array(PIL.Image.open("snips/" + file_name + ".png"))
+    os.remove("snips/" + file_name + ".png")
     text = pytesseract.image_to_string(imgarray)
     print(text)
 
@@ -31,6 +33,7 @@ class Application():
 
         root.geometry('100x50+200+200')  # set new geometry
         root.title('Alexandra')
+        root.iconbitmap(r'Alexandra.ico')
 
         self.menu_frame = tk.Frame(master)
         self.menu_frame.pack(fill=tk.BOTH, expand=tk.YES, padx=1, pady=1)

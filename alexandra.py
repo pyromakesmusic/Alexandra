@@ -67,22 +67,17 @@ class Application():
         self.master_screen.attributes("-topmost", True)
 
     def on_button_release(self, event):
-        self.display_rectangle_position()
 
         if self.start_x <= self.current_x and self.start_y <= self.current_y:
-            #print("right down")
             take_bounded_screenshot(self.start_x, self.start_y, self.current_x - self.start_x, self.current_y - self.start_y)
 
         elif self.start_x >= self.current_x and self.start_y <= self.current_y:
-            #print("left down")
             take_bounded_screenshot(self.current_x, self.start_y, self.start_x - self.current_x, self.current_y - self.start_y)
 
         elif self.start_x <= self.current_x and self.start_y >= self.current_y:
-            #print("right up")
             take_bounded_screenshot(self.start_x, self.current_y, self.current_x - self.start_x, self.start_y - self.current_y)
 
         elif self.start_x >= self.current_x and self.start_y >= self.current_y:
-            #print("left up")
             take_bounded_screenshot(self.current_x, self.current_y, self.start_x - self.current_x, self.start_y - self.current_y)
 
         self.exit_screenshot_mode()
@@ -104,11 +99,6 @@ class Application():
         # expand rectangle as you drag the mouse
         self.snip_surface.coords(1, self.start_x, self.start_y, self.current_x, self.current_y)
 
-    def display_rectangle_position(self):
-        print(self.start_x)
-        print(self.start_y)
-        print(self.current_x)
-        print(self.current_y)
 
 
 if __name__ == '__main__':

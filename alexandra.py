@@ -52,12 +52,10 @@ def text_capture(x1, y1, x2, y2):
     return text
 
 def text_formatter(input_text):
-    # This one is fully my function. Formats a string buffer into a dataframe.
+    # This one is fully my function; NOT a class method. Formats a string buffer into a dataframe.
     print(input_text)
-    text_df = pd.read_csv(io.StringIO(input_text), names=['History']) # This needs more scaffolding to ensure it outputs correctly.
+    text_df = pd.read_csv(io.StringIO(input_text)) # This needs more scaffolding to ensure it outputs correctly.
     text_df_revised = text_df.fillna("")
-    text_df_revised["History"] = text_df_revised.squeeze()
-    text_df_revised["User Definitions"] = ""
     print(text_df_revised.index)
     return(text_df_revised)
 """
@@ -75,10 +73,9 @@ class Application():
         self.start_y = None
         self.current_x = None
         self.current_y = None
-        self.history = None # I added this. This is a history dataframe - not the table object based on it.
-        self.history_table = None # This creates the pandastable item that will later be changed to a packed item
+        self.history = pd.DataFrame(columns=["History", "Notes"]) # I added this. This is a history dataframe - not the table object based on it.
 
-        root.geometry('300x50+1200+200')  # set new geometry
+        root.geometry('300x500+1200+200')  # set new geometry
         root.title('Alexandra') # Window title
         root.iconbitmap(r'Alexandra.ico') # Window icon
 
@@ -86,14 +83,19 @@ class Application():
         self.menu_frame.pack(side=tk.LEFT, expand=tk.YES)
 
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
-        self.buttonBar.grid(row=0, column=0, sticky="n")
+        self.buttonBar.grid(row=0, column=0, sticky="nw")
 
         self.snipButton = tk.Button(self.buttonBar, width=7, height=2, command=self.create_screen_canvas, # pretty sure this command needs editing
                                     text="Capture", background="cyan")
-        self.snipButton.grid(row=0, column=0, sticky="n")
+        self.snipButton.grid(row=0, column=0, sticky="nw")
 
         self.saveButton = tk.Button(self.buttonBar, width=7, height=2, command=self.save_history(), text="Save As...")
-        self.saveButton.grid(row=0,column=3, sticky="n")
+        self.saveButton.grid(row=0,column=3, sticky="nw")
+
+        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=True,
+                                      maxcellwidth=1500, cols=2) # This turns the instantiated class attribute into a pandastable
+        print(self.history)
+        self.history_table.grid(row=1, column=0, sticky="nw")
 
         self.master_screen = tk.Toplevel(root)
         self.master_screen.withdraw()
@@ -175,13 +177,11 @@ class Application():
         self.master_screen.withdraw()
         root.deiconify() # Pulls the root window out.
 
-        self.history = text_formatter(self.history)
+        self.history = text_formatter(self.history) # This should append to, rather than replace, the original history df
 
-        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=True,
-                                      maxcellwidth=1500, cols=2) # This turns the instantiated class attribute into a pandastable
-        self.history_table.grid(row=1, column=0, columnspan=2)
-        self.snipButton.grid(row=0, column=0)
-        self.saveButton.grid(row=0, column=1)
+
+        # self.snipButton.grid(row=0, column=0)
+        # self.saveButton.grid(row=0, column=1)
         self.history_table.adjustColumnWidths()
         self.history_table.show()
 

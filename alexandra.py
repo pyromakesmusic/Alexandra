@@ -149,8 +149,12 @@ class Application():
                                             self.start_y - self.current_y)
 
             self.exit_screenshot_mode()
-        except FloatingPointError:
+
+        except FloatingPointError: # This isn't the error I want to be capturing, but we're getting closer
             print(FloatingPointError)
+            print("Error capturing history, please try again")
+            self.exit_screenshot_mode()
+            self.create_screen_canvas()
 
         return event
 

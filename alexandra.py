@@ -1,6 +1,8 @@
 """
 A Python tool for grabbing history screenshots from FL Studio and converting them into a flexible history tool.
-Copyright 2023 new underground media brigade
+
+Built by Tayo Castro for Zakk Myer.
+Copyright 2023 new underground media brigade.
 See license for complete copyright details.
 """
 
@@ -15,6 +17,20 @@ import pyautogui
 import pytesseract
 import PIL
 
+
+"""
+CONFIG
+"""
+"""
+CONFIGURATION
+"""
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
+
+"""
+FUNCTIONS
+"""
 def text_capture(x1, y1, x2, y2):
     """
     This is currently throwing some pandas parsing tokenizing data errors.
@@ -30,13 +46,16 @@ def text_capture(x1, y1, x2, y2):
     imgarray = np.array(PIL.Image.open("temp/" + file_name + ".png"))
     os.remove("temp/" + file_name + ".png")
     text = pytesseract.image_to_string(imgarray)
+
     print(text) # Somehow adding this line is working? for some god damned reason
-    text_df = pd.read_csv(io.StringIO(text))
+    text_df = pd.read_csv(io.StringIO(text), names=['History'])
     text_df_revised = text_df.fillna("")
     text_df_revised["User Defined History"] = ""
     print(text_df_revised)
     return(text_df_revised)
-
+"""
+CLASSES
+"""
 
 class Application():
     """
@@ -121,8 +140,7 @@ class Application():
         self.master_screen.withdraw()
         root.deiconify()
 
-        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=True, showstatusbar=False,
-                                      cols=2) # This turns the instantiated class attribute into a pandastable
+        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=True, cols=1) # This turns the instantiated class attribute into a pandastable
         self.history_table.grid(row=1, column=0)
         self.history_table.show()
 

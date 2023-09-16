@@ -16,17 +16,26 @@ import pytesseract
 import PIL
 
 def text_capture(x1, y1, x2, y2):
+    """
+    This is currently throwing some pandas parsing tokenizing data errors.
+    :param x1:
+    :param y1:
+    :param x2:
+    :param y2:
+    :return:
+    """
     image = pyautogui.screenshot(region=(x1, y1, x2, y2))
     file_name = datetime.datetime.now().strftime("%f")
     image.save("temp/" + file_name + ".png") # want to remove this line and instead feed into pytesseract.
     imgarray = np.array(PIL.Image.open("temp/" + file_name + ".png"))
     os.remove("temp/" + file_name + ".png")
     text = pytesseract.image_to_string(imgarray)
+    print(text) # Somehow adding this line is working? for some god damned reason
     text_df = pd.read_csv(io.StringIO(text))
     text_df_revised = text_df.fillna("")
-    text_table = text_df_revised.squeeze()
-    print(text_table)
-    return(text_table)
+    text_df_revised["User Defined History"] = ""
+    print(text_df_revised)
+    return(text_df_revised)
 
 
 class Application():
@@ -105,16 +114,16 @@ class Application():
 
     def exit_screenshot_mode(self):
         """
-        Destroys the screencap mode.
+        Destroys the screencap mode, and shows the table
         :return:
         """
         self.snip_surface.destroy()
         self.master_screen.withdraw()
         root.deiconify()
 
-        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=False,
-                                      cols=1, rows=1)
-        self.history_table.grid(row=2, column=1)
+        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=True, showstatusbar=False,
+                                      cols=2) # This turns the instantiated class attribute into a pandastable
+        self.history_table.grid(row=1, column=0)
         self.history_table.show()
 
     def on_button_press(self, event):

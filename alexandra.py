@@ -10,6 +10,8 @@ import datetime
 import os
 import io
 import tkinter as tk
+import tkinter.filedialog
+
 import numpy as np
 import pandas as pd
 import pandastable as pt
@@ -76,21 +78,23 @@ class Application():
         root.iconbitmap(r'Alexandra.ico') # Window icon
 
         self.menu_frame = tk.Frame(master)
-        self.menu_frame.pack(side=tk.LEFT, expand=tk.YES)
+        self.menu_frame.pack(side=tk.TOP, expand=tk.YES)
 
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
         self.buttonBar.grid(row=0, column=0, sticky="n")
 
-        self.snipButton = tk.Button(self.buttonBar, width=6, height=8, command=self.create_screen_canvas, background="red")
-        self.snipButton.grid(row=0, column=1, sticky="n")
+        self.snipButton = tk.Button(self.buttonBar, width=6, height=4, command=self.create_screen_canvas, background="red")
+        self.snipButton.grid(row=0, column=0, sticky="n")
+
+        self.saveButton = tk.Button(self.buttonBar, width=6, height=4, command=self.save_history(),
+                                    background="green")
+        self.saveButton.grid(row=0,column=1, sticky="n")
 
         self.master_screen = tk.Toplevel(root)
         self.master_screen.withdraw()
         self.master_screen.attributes("-transparent", "maroon3")
         self.picture_frame = tk.Frame(self.master_screen, background="maroon3")
         self.picture_frame.pack(fill=tk.BOTH, expand=tk.YES)
-
-
 
 
     def create_screen_canvas(self):
@@ -140,8 +144,12 @@ class Application():
         self.master_screen.withdraw()
         root.deiconify()
 
-        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=True, cols=1) # This turns the instantiated class attribute into a pandastable
-        self.history_table.grid(row=1, column=0)
+        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=True,
+                                      maxcellwidth=1500, cols=2) # This turns the instantiated class attribute into a pandastable
+        self.history_table.grid(row=1, column=0, columnspan=2)
+        self.snipButton.grid(row=0, column=0)
+        self.saveButton.grid(row=0, column=1)
+        self.history_table.adjustColumnWidths()
         self.history_table.show()
 
     def on_button_press(self, event):
@@ -159,6 +167,9 @@ class Application():
         self.current_x, self.current_y = (event.x, event.y)
         # expand rectangle as you drag the mouse
         self.snip_surface.coords(1, self.start_x, self.start_y, self.current_x, self.current_y)
+
+    def save_history(self):
+        tkinter.filedialog.SaveAs()
 
 
 

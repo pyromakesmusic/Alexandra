@@ -10,11 +10,12 @@ import io
 import tkinter as tk
 import numpy as np
 import pandas as pd
+import pandastable as pt
 import pyautogui
 import pytesseract
 import PIL
 
-def take_bounded_screenshot(x1, y1, x2, y2):
+def text_capture(x1, y1, x2, y2):
     image = pyautogui.screenshot(region=(x1, y1, x2, y2))
     file_name = datetime.datetime.now().strftime("%f")
     image.save("temp/" + file_name + ".png") # want to remove this line and instead feed into pytesseract.
@@ -29,7 +30,7 @@ def take_bounded_screenshot(x1, y1, x2, y2):
 
 class Application():
     """
-    Tkinter stuff
+    Tkinter main loop.
     """
     def __init__(self, master):
         self.snip_surface = None
@@ -59,6 +60,10 @@ class Application():
         self.picture_frame.pack(fill=tk.BOTH, expand=tk.YES)
 
     def create_screen_canvas(self):
+        """
+        Initializes the snipping surface.
+        :return:
+        """
         self.master_screen.deiconify()
         root.withdraw()
 
@@ -77,21 +82,25 @@ class Application():
     def on_button_release(self, event):
 
         if self.start_x <= self.current_x and self.start_y <= self.current_y:
-            take_bounded_screenshot(self.start_x, self.start_y, self.current_x - self.start_x, self.current_y - self.start_y)
+            text_capture(self.start_x, self.start_y, self.current_x - self.start_x, self.current_y - self.start_y)
 
         elif self.start_x >= self.current_x and self.start_y <= self.current_y:
-            take_bounded_screenshot(self.current_x, self.start_y, self.start_x - self.current_x, self.current_y - self.start_y)
+            text_capture(self.current_x, self.start_y, self.start_x - self.current_x, self.current_y - self.start_y)
 
         elif self.start_x <= self.current_x and self.start_y >= self.current_y:
-            take_bounded_screenshot(self.start_x, self.current_y, self.current_x - self.start_x, self.start_y - self.current_y)
+            text_capture(self.start_x, self.current_y, self.current_x - self.start_x, self.start_y - self.current_y)
 
         elif self.start_x >= self.current_x and self.start_y >= self.current_y:
-            take_bounded_screenshot(self.current_x, self.current_y, self.start_x - self.current_x, self.start_y - self.current_y)
+            text_capture(self.current_x, self.current_y, self.start_x - self.current_x, self.start_y - self.current_y)
 
         self.exit_screenshot_mode()
         return event
 
     def exit_screenshot_mode(self):
+        """
+        Destroys the screencap mode.
+        :return:
+        """
         self.snip_surface.destroy()
         self.master_screen.withdraw()
         root.deiconify()
@@ -103,6 +112,11 @@ class Application():
         self.snip_surface.create_rectangle(0, 0, 1, 1, outline='red', width=3, fill="maroon3")
 
     def on_snip_drag(self, event):
+        """
+        This can stay unchanged for now.
+        :param event:
+        :return:
+        """
         self.current_x, self.current_y = (event.x, event.y)
         # expand rectangle as you drag the mouse
         self.snip_surface.coords(1, self.start_x, self.start_y, self.current_x, self.current_y)

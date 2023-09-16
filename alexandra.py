@@ -47,23 +47,23 @@ class Application():
         root.iconbitmap(r'Alexandra.ico') # Window icon
 
         self.menu_frame = tk.Frame(master)
-        self.menu_frame.grid(row=0)
+        self.menu_frame.pack(fill=tk.BOTH, expand=tk.YES)
 
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
-        self.buttonBar.grid(row=1)
+        self.buttonBar.grid(row=0, column=0, sticky="n")
 
         self.snipButton = tk.Button(self.buttonBar, width=6, height=8, command=self.create_screen_canvas, background="red")
-        self.snipButton.grid(row=2)
+        self.snipButton.grid(row=0, column=1, sticky="n")
 
         self.master_screen = tk.Toplevel(root)
         self.master_screen.withdraw()
         self.master_screen.attributes("-transparent", "maroon3")
         self.picture_frame = tk.Frame(self.master_screen, background="maroon3")
-        self.picture_frame.pack(fill=tk.BOTH)
+        self.picture_frame.pack(fill=tk.BOTH, expand=tk.YES)
 
 
         self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=False)
-        self.history_table.grid(row=1, column=1)
+        self.history_table.grid(row=0, column=1)
 
     def create_screen_canvas(self):
         """

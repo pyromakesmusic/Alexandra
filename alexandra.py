@@ -52,8 +52,6 @@ def text_capture(x1, y1, x2, y2):
     print(text) # Somehow adding this line is working? for some god damned reason
     text_df = pd.read_csv(io.StringIO(text), names=['History'])
     text_df_revised = text_df.fillna("")
-    text_df_revised["User Defined History"] = ""
-    print(text_df_revised)
     return(text_df_revised)
 """
 CLASSES
@@ -78,17 +76,17 @@ class Application():
         root.iconbitmap(r'Alexandra.ico') # Window icon
 
         self.menu_frame = tk.Frame(master)
-        self.menu_frame.pack(side=tk.TOP, expand=tk.YES)
+        self.menu_frame.pack(side=tk.LEFT, expand=tk.YES)
 
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
         self.buttonBar.grid(row=0, column=0, sticky="n")
 
-        self.snipButton = tk.Button(self.buttonBar, width=6, height=4, command=self.create_screen_canvas, background="red")
+        self.snipButton = tk.Button(self.buttonBar, width=7, height=2, command=self.create_screen_canvas,
+                                    text="Capture", background="cyan")
         self.snipButton.grid(row=0, column=0, sticky="n")
 
-        self.saveButton = tk.Button(self.buttonBar, width=6, height=4, command=self.save_history(),
-                                    background="green")
-        self.saveButton.grid(row=0,column=1, sticky="n")
+        self.saveButton = tk.Button(self.buttonBar, width=7, height=2, command=self.save_history(), text="Save As...")
+        self.saveButton.grid(row=0,column=3, sticky="n")
 
         self.master_screen = tk.Toplevel(root)
         self.master_screen.withdraw()

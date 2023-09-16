@@ -44,11 +44,10 @@ def text_capture(x1, y1, x2, y2):
     """
     image = pyautogui.screenshot(region=(x1, y1, x2, y2))
     file_name = datetime.datetime.now().strftime("%f")
-    image.save("temp/" + file_name + ".png") # want to remove this line and instead feed into pytesseract.
+    image.save("temp/" + file_name + ".png")
     imgarray = np.array(PIL.Image.open("temp/" + file_name + ".png"))
-    os.remove("temp/" + file_name + ".png")
+    os.remove("temp/" + file_name + ".png") # This removes the temporary file that was created for processing
     text = pytesseract.image_to_string(imgarray)
-
     print(text) # Somehow adding this line is working? for some god damned reason
     text_df = pd.read_csv(io.StringIO(text), names=['History'])
     text_df_revised = text_df.fillna("")
@@ -71,7 +70,7 @@ class Application():
         self.history = None # I added this. This is a history dataframe - not the table object based on it.
         self.history_table = None # This creates the pandastable item that will later be changed to a packed item
 
-        root.geometry('300x50+200+200')  # set new geometry
+        root.geometry('300x50+1200+200')  # set new geometry
         root.title('Alexandra') # Window title
         root.iconbitmap(r'Alexandra.ico') # Window icon
 
@@ -81,7 +80,7 @@ class Application():
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
         self.buttonBar.grid(row=0, column=0, sticky="n")
 
-        self.snipButton = tk.Button(self.buttonBar, width=7, height=2, command=self.create_screen_canvas,
+        self.snipButton = tk.Button(self.buttonBar, width=7, height=2, command=self.create_screen_canvas, # pretty sure this command needs editing
                                     text="Capture", background="cyan")
         self.snipButton.grid(row=0, column=0, sticky="n")
 
@@ -115,21 +114,43 @@ class Application():
         self.master_screen.lift()
         self.master_screen.attributes("-topmost", True)
 
+    def on_button_press(self, event):
+        # save mouse drag start position
+        self.start_x = self.snip_surface.canvasx(event.x)
+        self.start_y = self.snip_surface.canvasy(event.y)
+        self.snip_surface.create_rectangle(0, 0, 1, 1, outline='red', width=3, fill="maroon3")
+
+    def on_snip_drag(self, event):
+        """
+        :param event: mouse drag
+        :return:
+        """
+        self.current_x, self.current_y = (event.x, event.y)
+        # expand rectangle as you drag the mouse
+        self.snip_surface.coords(1, self.start_x, self.start_y, self.current_x, self.current_y)
+
     def on_button_release(self, event):
+        # activated on release - should do exception checking here
+        try:
+            if self.start_x <= self.current_x and self.start_y <= self.current_y:
+                self.history = text_capture(self.start_x, self.start_y, self.current_x - self.start_x,
+                                            self.current_y - self.start_y)
 
-        if self.start_x <= self.current_x and self.start_y <= self.current_y:
-            self.history = text_capture(self.start_x, self.start_y, self.current_x - self.start_x, self.current_y - self.start_y)
+            elif self.start_x >= self.current_x and self.start_y <= self.current_y:
+                self.history = text_capture(self.current_x, self.start_y, self.start_x - self.current_x,
+                                            self.current_y - self.start_y)
 
-        elif self.start_x >= self.current_x and self.start_y <= self.current_y:
-            self.history = text_capture(self.current_x, self.start_y, self.start_x - self.current_x, self.current_y - self.start_y)
+            elif self.start_x <= self.current_x and self.start_y >= self.current_y:
+                self.history = text_capture(self.start_x, self.current_y, self.current_x - self.start_x,
+                                            self.start_y - self.current_y)
 
-        elif self.start_x <= self.current_x and self.start_y >= self.current_y:
-            self.history = text_capture(self.start_x, self.current_y, self.current_x - self.start_x, self.start_y - self.current_y)
+            elif self.start_x >= self.current_x and self.start_y >= self.current_y:
+                self.history = text_capture(self.current_x, self.current_y, self.start_x - self.current_x,
+                                            self.start_y - self.current_y)
 
-        elif self.start_x >= self.current_x and self.start_y >= self.current_y:
-            self.history = text_capture(self.current_x, self.current_y, self.start_x - self.current_x, self.start_y - self.current_y)
-
-        self.exit_screenshot_mode()
+            self.exit_screenshot_mode()
+        except FloatingPointError:
+            print(FloatingPointError)
 
         return event
 
@@ -149,22 +170,6 @@ class Application():
         self.saveButton.grid(row=0, column=1)
         self.history_table.adjustColumnWidths()
         self.history_table.show()
-
-    def on_button_press(self, event):
-        # save mouse drag start position
-        self.start_x = self.snip_surface.canvasx(event.x)
-        self.start_y = self.snip_surface.canvasy(event.y)
-        self.snip_surface.create_rectangle(0, 0, 1, 1, outline='red', width=3, fill="maroon3")
-
-    def on_snip_drag(self, event):
-        """
-        This can stay unchanged for now.
-        :param event:
-        :return:
-        """
-        self.current_x, self.current_y = (event.x, event.y)
-        # expand rectangle as you drag the mouse
-        self.snip_surface.coords(1, self.start_x, self.start_y, self.current_x, self.current_y)
 
     def save_history(self):
         tkinter.filedialog.SaveAs()

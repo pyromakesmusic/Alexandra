@@ -35,7 +35,6 @@ FUNCTIONS
 """
 def text_capture(x1, y1, x2, y2):
     """
-    This is currently throwing some pandas parsing tokenizing data errors.
     :param x1:
     :param y1:
     :param x2:
@@ -48,16 +47,12 @@ def text_capture(x1, y1, x2, y2):
     imgarray = np.array(PIL.Image.open("temp/" + file_name + ".png"))
     os.remove("temp/" + file_name + ".png") # This removes the temporary file that was created for processing
     text = pytesseract.image_to_string(imgarray)
-    #print(text) # Somehow adding this line is working? for some god damned reason
     return text
 
 def text_formatter(input_text):
     # This one is fully my function; NOT a class method. Formats a string buffer into a dataframe.
     print(input_text)
-    text_df = pd.read_csv(io.StringIO(input_text)) # This needs more scaffolding to ensure it outputs correctly.
-    text_df_revised = text_df.fillna("")
-    print(text_df_revised.index)
-    return(text_df_revised)
+    return(input_text)
 """
 CLASSES
 """
@@ -74,6 +69,8 @@ class Application():
         self.current_x = None
         self.current_y = None
         self.history = pd.DataFrame(columns=["History", "Notes"]) # I added this. This is a history dataframe - not the table object based on it.
+        self.history_buffer = None
+
 
         root.geometry('300x500+1200+200')  # set new geometry
         root.title('Alexandra') # Window title
@@ -85,6 +82,9 @@ class Application():
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
         self.buttonBar.grid(row=0, column=0, sticky="nw")
 
+        self.tableFrame = tk.Frame(self.menu_frame)
+        self.tableFrame.grid(row=1, column=0)
+
         self.snipButton = tk.Button(self.buttonBar, width=7, height=2, command=self.create_screen_canvas, # pretty sure this command needs editing
                                     text="Capture", background="cyan")
         self.snipButton.grid(row=0, column=0, sticky="nw")
@@ -92,10 +92,8 @@ class Application():
         self.saveButton = tk.Button(self.buttonBar, width=7, height=2, command=self.save_history(), text="Save As...")
         self.saveButton.grid(row=0,column=3, sticky="nw")
 
-        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=True,
-                                      maxcellwidth=1500, cols=2) # This turns the instantiated class attribute into a pandastable
-        print(self.history)
-        self.history_table.grid(row=1, column=0, sticky="nw")
+        self.history_text = tk.Text(self.tableFrame, height=10, width=10) # This turns the instantiated class attribute into a pandastable
+        self.history_text.grid(row=1, column=0, sticky="nw")
 
         self.master_screen = tk.Toplevel(root)
         self.master_screen.withdraw()
@@ -143,19 +141,19 @@ class Application():
         # activated on release - should do exception checking here
         try:
             if self.start_x <= self.current_x and self.start_y <= self.current_y:
-                self.history = text_capture(self.start_x, self.start_y, self.current_x - self.start_x,
+                self.history_buffer = text_capture(self.start_x, self.start_y, self.current_x - self.start_x,
                                             self.current_y - self.start_y)
 
             elif self.start_x >= self.current_x and self.start_y <= self.current_y:
-                self.history = text_capture(self.current_x, self.start_y, self.start_x - self.current_x,
+                self.history_buffer = text_capture(self.current_x, self.start_y, self.start_x - self.current_x,
                                             self.current_y - self.start_y)
 
             elif self.start_x <= self.current_x and self.start_y >= self.current_y:
-                self.history = text_capture(self.start_x, self.current_y, self.current_x - self.start_x,
+                self.history_buffer = text_capture(self.start_x, self.current_y, self.current_x - self.start_x,
                                             self.start_y - self.current_y)
 
             elif self.start_x >= self.current_x and self.start_y >= self.current_y:
-                self.history = text_capture(self.current_x, self.current_y, self.start_x - self.current_x,
+                self.history_buffer = text_capture(self.current_x, self.current_y, self.start_x - self.current_x,
                                             self.start_y - self.current_y)
 
             self.exit_screenshot_mode()
@@ -176,14 +174,8 @@ class Application():
         self.snip_surface.destroy()
         self.master_screen.withdraw()
         root.deiconify() # Pulls the root window out.
+        self.history_text.insert(tk.END, self.history_buffer)
 
-        self.history = text_formatter(self.history) # This should append to, rather than replace, the original history df
-
-
-        # self.snipButton.grid(row=0, column=0)
-        # self.saveButton.grid(row=0, column=1)
-        self.history_table.adjustColumnWidths()
-        self.history_table.show()
 
     def save_history(self):
         tkinter.filedialog.SaveAs()

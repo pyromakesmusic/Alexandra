@@ -48,9 +48,17 @@ def text_capture(x1, y1, x2, y2):
     imgarray = np.array(PIL.Image.open("temp/" + file_name + ".png"))
     os.remove("temp/" + file_name + ".png") # This removes the temporary file that was created for processing
     text = pytesseract.image_to_string(imgarray)
-    print(text) # Somehow adding this line is working? for some god damned reason
-    text_df = pd.read_csv(io.StringIO(text), names=['History'])
+    #print(text) # Somehow adding this line is working? for some god damned reason
+    return text
+
+def text_formatter(input_text):
+    # This one is fully my function. Formats a string buffer into a dataframe.
+    print(input_text)
+    text_df = pd.read_csv(io.StringIO(input_text), names=['History']) # This needs more scaffolding to ensure it outputs correctly.
     text_df_revised = text_df.fillna("")
+    text_df_revised["History"] = text_df_revised.squeeze()
+    text_df_revised["User Definitions"] = ""
+    print(text_df_revised.index)
     return(text_df_revised)
 """
 CLASSES
@@ -165,7 +173,9 @@ class Application():
         """
         self.snip_surface.destroy()
         self.master_screen.withdraw()
-        root.deiconify()
+        root.deiconify() # Pulls the root window out.
+
+        self.history = text_formatter(self.history)
 
         self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=True,
                                       maxcellwidth=1500, cols=2) # This turns the instantiated class attribute into a pandastable

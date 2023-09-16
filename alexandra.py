@@ -26,6 +26,7 @@ def text_capture(x1, y1, x2, y2):
     text_df_revised = text_df.fillna("")
     text_table = text_df_revised.squeeze()
     print(text_table)
+    return(text_table)
 
 
 class Application():
@@ -39,25 +40,30 @@ class Application():
         self.start_y = None
         self.current_x = None
         self.current_y = None
+        self.history = None # I added this. This is a history dataframe - not the table object based on it.
 
         root.geometry('300x50+200+200')  # set new geometry
         root.title('Alexandra') # Window title
         root.iconbitmap(r'Alexandra.ico') # Window icon
 
         self.menu_frame = tk.Frame(master)
-        self.menu_frame.pack(fill=tk.BOTH, expand=tk.YES, padx=1, pady=1)
+        self.menu_frame.grid(row=0)
 
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
-        self.buttonBar.pack()
+        self.buttonBar.grid(row=1)
 
         self.snipButton = tk.Button(self.buttonBar, width=6, height=8, command=self.create_screen_canvas, background="red")
-        self.snipButton.pack()
+        self.snipButton.grid(row=2)
 
         self.master_screen = tk.Toplevel(root)
         self.master_screen.withdraw()
         self.master_screen.attributes("-transparent", "maroon3")
         self.picture_frame = tk.Frame(self.master_screen, background="maroon3")
-        self.picture_frame.pack(fill=tk.BOTH, expand=tk.YES)
+        self.picture_frame.pack(fill=tk.BOTH)
+
+
+        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=False)
+        self.history_table.grid(row=1, column=1)
 
     def create_screen_canvas(self):
         """
@@ -82,18 +88,19 @@ class Application():
     def on_button_release(self, event):
 
         if self.start_x <= self.current_x and self.start_y <= self.current_y:
-            text_capture(self.start_x, self.start_y, self.current_x - self.start_x, self.current_y - self.start_y)
+            self.history = text_capture(self.start_x, self.start_y, self.current_x - self.start_x, self.current_y - self.start_y)
 
         elif self.start_x >= self.current_x and self.start_y <= self.current_y:
-            text_capture(self.current_x, self.start_y, self.start_x - self.current_x, self.current_y - self.start_y)
+            self.history = text_capture(self.current_x, self.start_y, self.start_x - self.current_x, self.current_y - self.start_y)
 
         elif self.start_x <= self.current_x and self.start_y >= self.current_y:
-            text_capture(self.start_x, self.current_y, self.current_x - self.start_x, self.start_y - self.current_y)
+            self.history = text_capture(self.start_x, self.current_y, self.current_x - self.start_x, self.start_y - self.current_y)
 
         elif self.start_x >= self.current_x and self.start_y >= self.current_y:
-            text_capture(self.current_x, self.current_y, self.start_x - self.current_x, self.start_y - self.current_y)
+            self.history = text_capture(self.current_x, self.current_y, self.start_x - self.current_x, self.start_y - self.current_y)
 
         self.exit_screenshot_mode()
+
         return event
 
     def exit_screenshot_mode(self):
@@ -104,6 +111,8 @@ class Application():
         self.snip_surface.destroy()
         self.master_screen.withdraw()
         root.deiconify()
+
+        self.history_table.show()
 
     def on_button_press(self, event):
         # save mouse drag start position

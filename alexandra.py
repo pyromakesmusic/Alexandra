@@ -41,13 +41,14 @@ class Application():
         self.current_x = None
         self.current_y = None
         self.history = None # I added this. This is a history dataframe - not the table object based on it.
+        self.history_table = None # This creates the pandastable item that will later be changed to a packed item
 
         root.geometry('300x50+200+200')  # set new geometry
         root.title('Alexandra') # Window title
         root.iconbitmap(r'Alexandra.ico') # Window icon
 
         self.menu_frame = tk.Frame(master)
-        self.menu_frame.pack(fill=tk.BOTH, expand=tk.YES)
+        self.menu_frame.pack(side=tk.LEFT, expand=tk.YES)
 
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
         self.buttonBar.grid(row=0, column=0, sticky="n")
@@ -62,8 +63,7 @@ class Application():
         self.picture_frame.pack(fill=tk.BOTH, expand=tk.YES)
 
 
-        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=False)
-        self.history_table.grid(row=0, column=1)
+
 
     def create_screen_canvas(self):
         """
@@ -112,6 +112,9 @@ class Application():
         self.master_screen.withdraw()
         root.deiconify()
 
+        self.history_table = pt.Table(self.menu_frame, dataframe=self.history, showtoolbar=False, showstatusbar=False,
+                                      cols=1, rows=1)
+        self.history_table.grid(row=2, column=1)
         self.history_table.show()
 
     def on_button_press(self, event):

@@ -14,7 +14,6 @@ import tkinter.filedialog
 
 import numpy as np
 import pandas as pd
-import pandastable as pt
 import pyautogui
 import pytesseract
 import PIL
@@ -68,7 +67,7 @@ class Application():
         self.start_y = None
         self.current_x = None
         self.current_y = None
-        self.history = pd.DataFrame(columns=["History", "Notes"]) # I added this. This is a history dataframe - not the table object based on it.
+        self.history = None # I added this. This is a history dataframe - not the table object based on it.
         self.history_buffer = None
 
 
@@ -80,10 +79,10 @@ class Application():
         self.menu_frame.pack(side=tk.LEFT, expand=tk.YES)
 
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
-        self.buttonBar.grid(row=0, column=0, sticky="nw")
+        self.buttonBar.pack(side=tk.TOP)
 
         self.tableFrame = tk.Frame(self.menu_frame)
-        self.tableFrame.grid(row=1, column=0)
+        self.tableFrame.pack(expand=tk.TRUE, fill=tk.BOTH)
 
         self.snipButton = tk.Button(self.buttonBar, width=7, height=2, command=self.create_screen_canvas, # pretty sure this command needs editing
                                     text="Capture", background="cyan")
@@ -92,8 +91,8 @@ class Application():
         self.saveButton = tk.Button(self.buttonBar, width=7, height=2, command=self.save_history(), text="Save As...")
         self.saveButton.grid(row=0,column=3, sticky="nw")
 
-        self.history_text = tk.Text(self.tableFrame, height=10, width=10) # This turns the instantiated class attribute into a pandastable
-        self.history_text.grid(row=1, column=0, sticky="nw")
+        self.history_text = tk.Text(self.tableFrame, height=20, width=20) # This turns the instantiated class attribute into a pandastable
+        self.history_text.pack(expand=tk.TRUE, fill=tk.BOTH)
 
         self.master_screen = tk.Toplevel(root)
         self.master_screen.withdraw()

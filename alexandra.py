@@ -10,6 +10,7 @@ import datetime
 import os
 import io
 import tkinter as tk
+import tkinter.scrolledtext as st
 import tkinter.filedialog
 
 import numpy as np
@@ -51,7 +52,7 @@ def text_capture(x1, y1, x2, y2):
 def text_formatter(input_text):
     # This one is fully my function; NOT a class method. Formats a string buffer into a dataframe.
     print(input_text)
-    return(input_text)
+    return(input_text.strip())
 """
 CLASSES
 """
@@ -76,23 +77,29 @@ class Application():
         root.iconbitmap(r'Alexandra.ico') # Window icon
 
         self.menu_frame = tk.Frame(master)
-        self.menu_frame.pack(side=tk.LEFT, expand=tk.YES)
+        self.menu_frame.pack(expand=tk.TRUE, fill=tk.BOTH)
 
         self.buttonBar = tk.Frame(self.menu_frame, bg="")
         self.buttonBar.pack(side=tk.TOP)
 
-        self.tableFrame = tk.Frame(self.menu_frame)
-        self.tableFrame.pack(expand=tk.TRUE, fill=tk.BOTH)
+        self.table_frame = tk.Frame(self.menu_frame)
+        self.table_frame.pack()
 
         self.snipButton = tk.Button(self.buttonBar, width=7, height=2, command=self.create_screen_canvas, # pretty sure this command needs editing
-                                    text="Capture", background="cyan")
-        self.snipButton.grid(row=0, column=0, sticky="nw")
+                                    text="Capture", background="gray")
+        self.snipButton.grid(row=0, column=0, sticky="w")
+
+        self.findButton = tk.Button(self.buttonBar, width=10, height=2, text="Find and Replace...")
+        self.findButton.grid(row=0, column=1, sticky="w")
 
         self.saveButton = tk.Button(self.buttonBar, width=7, height=2, command=self.save_history(), text="Save As...")
-        self.saveButton.grid(row=0,column=3, sticky="nw")
+        self.saveButton.grid(row=0,column=3, sticky="w")
 
-        self.history_text = tk.Text(self.tableFrame, height=20, width=20) # This turns the instantiated class attribute into a pandastable
-        self.history_text.pack(expand=tk.TRUE, fill=tk.BOTH)
+        self.history_text = st.ScrolledText(self.table_frame, height=20, width=20) # This turns the instantiated class attribute into a pandastable
+        self.history_text.pack()
+
+        self.scrollbar = tk.Scrollbar(self.table_frame, orient="vertical")
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         self.master_screen = tk.Toplevel(root)
         self.master_screen.withdraw()
@@ -175,8 +182,17 @@ class Application():
         root.deiconify() # Pulls the root window out.
         self.history_text.insert(tk.END, self.history_buffer)
 
+    def find_and_replace(self):
+        """
+        For finding and replacing specific instances of words with user generated substitutes.
+        :return:
+        """
 
     def save_history(self):
+        """
+        Should save all the text. This still needs to be built out.
+        :return:
+        """
         tkinter.filedialog.SaveAs()
 
 

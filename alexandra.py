@@ -89,17 +89,14 @@ class Application():
                                     text="Capture", background="gray")
         self.snipButton.grid(row=0, column=0, sticky="w")
 
-        self.findButton = tk.Button(self.buttonBar, width=10, height=2, text="Find and Replace...")
+        self.findButton = tk.Button(self.buttonBar, width=16, height=2, text="Find and Replace...")
         self.findButton.grid(row=0, column=1, sticky="w")
 
-        self.saveButton = tk.Button(self.buttonBar, width=7, height=2, command=self.save_history(), text="Save As...")
+        self.saveButton = tk.Button(self.buttonBar, width=7, height=2, command=self.save_history, text="Save As...")
         self.saveButton.grid(row=0,column=3, sticky="w")
 
-        self.history_text = st.ScrolledText(self.table_frame, height=20, width=20) # This turns the instantiated class attribute into a pandastable
+        self.history_text = st.ScrolledText(self.table_frame, height=20, width=25) # This turns the instantiated class attribute into a pandastable
         self.history_text.pack()
-
-        self.scrollbar = tk.Scrollbar(self.table_frame, orient="vertical")
-        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         self.master_screen = tk.Toplevel(root)
         self.master_screen.withdraw()
@@ -193,7 +190,11 @@ class Application():
         Should save all the text. This still needs to be built out.
         :return:
         """
-        tkinter.filedialog.SaveAs()
+        filename = tkinter.filedialog.asksaveasfilename(filetypes=[('Text Document', '*.txt')],
+                                                        defaultextension=[('Text Document', '*.txt')])
+        text_file = open(filename, "w")
+        text_file.write(self.history_text.get('1.0', 'end-1c'))
+        text_file.close()
 
 
 
